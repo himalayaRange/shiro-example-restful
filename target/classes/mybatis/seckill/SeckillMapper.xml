@@ -1,0 +1,135 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="cn.com.zygx.backFramework.dao.SeckillDao" >
+  <resultMap id="BaseResultMap" type="cn.com.zygx.backFramework.model.Seckill" >
+    <id column="seckill_id" property="seckill_id" jdbcType="BIGINT" />
+    <result column="name" property="name" jdbcType="VARCHAR" />
+    <result column="number" property="number" jdbcType="INTEGER" />
+    <result column="start_time" property="start_time" jdbcType="TIMESTAMP" />
+    <result column="end_time" property="end_time" jdbcType="TIMESTAMP" />
+    <result column="create_time" property="create_time" jdbcType="TIMESTAMP" />
+  </resultMap>
+  <sql id="Base_Column_List" >
+    seckill_id, name, number, start_time, end_time, create_time
+  </sql>
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Long" >
+    select 
+    <include refid="Base_Column_List" />
+    from seckill
+    where seckill_id = #{seckill_id,jdbcType=BIGINT}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Long" >
+    delete from seckill
+    where seckill_id = #{seckill_id,jdbcType=BIGINT}
+  </delete>
+  <insert id="insert" parameterType="cn.com.zygx.backFramework.model.Seckill" >
+    insert  into seckill (seckill_id, name, number, 
+      start_time, end_time, create_time
+      )
+    values (#{seckill_id,jdbcType=BIGINT}, #{name,jdbcType=VARCHAR}, #{number,jdbcType=INTEGER}, 
+      #{start_time,jdbcType=TIMESTAMP}, #{end_time,jdbcType=TIMESTAMP}, #{create_time,jdbcType=TIMESTAMP}
+      )
+  </insert>
+  <insert id="insertSelective" parameterType="cn.com.zygx.backFramework.model.Seckill" >
+    insert  into seckill
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="seckill_id != null" >
+        seckill_id,
+      </if>
+      <if test="name != null" >
+        name,
+      </if>
+      <if test="number != null" >
+        number,
+      </if>
+      <if test="start_time != null" >
+        start_time,
+      </if>
+      <if test="end_time != null" >
+        end_time,
+      </if>
+      <if test="create_time != null" >
+        create_time,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="seckill_id != null" >
+        #{seckill_id,jdbcType=BIGINT},
+      </if>
+      <if test="name != null" >
+        #{name,jdbcType=VARCHAR},
+      </if>
+      <if test="number != null" >
+        #{number,jdbcType=INTEGER},
+      </if>
+      <if test="start_time != null" >
+        #{start_time,jdbcType=TIMESTAMP},
+      </if>
+      <if test="end_time != null" >
+        #{end_time,jdbcType=TIMESTAMP},
+      </if>
+      <if test="create_time != null" >
+        #{create_time,jdbcType=TIMESTAMP},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="cn.com.zygx.backFramework.model.Seckill" >
+    update seckill
+    <set >
+      <if test="name != null" >
+        name = #{name,jdbcType=VARCHAR},
+      </if>
+      <if test="number != null" >
+        number = #{number,jdbcType=INTEGER},
+      </if>
+      <if test="start_time != null" >
+        start_time = #{start_time,jdbcType=TIMESTAMP},
+      </if>
+      <if test="end_time != null" >
+        end_time = #{end_time,jdbcType=TIMESTAMP},
+      </if>
+      <if test="create_time != null" >
+        create_time = #{create_time,jdbcType=TIMESTAMP},
+      </if>
+    </set>
+    where seckill_id = #{seckill_id,jdbcType=BIGINT}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="cn.com.zygx.backFramework.model.Seckill" >
+    update seckill
+    set name = #{name,jdbcType=VARCHAR},
+      number = #{number,jdbcType=INTEGER},
+      start_time = #{start_time,jdbcType=TIMESTAMP},
+      end_time = #{end_time,jdbcType=TIMESTAMP},
+      create_time = #{create_time,jdbcType=TIMESTAMP}
+    where seckill_id = #{seckill_id,jdbcType=BIGINT}
+  </update>
+  
+    <update id="reduceNum"  >
+    update seckill
+    set 
+		number = number-1 
+    where seckill_id = #{seckillId,jdbcType=BIGINT} 
+    <![CDATA[ and start_time<= #{killTime,jdbcType=TIMESTAMP}]]>   
+    <![CDATA[ and end_time>=#{killTime,jdbcType=TIMESTAMP} ]]> 
+    and number>0
+  </update>
+  
+  <select id="queryAll" resultType="cn.com.zygx.backFramework.model.Seckill" >
+    select 
+    <include refid="Base_Column_List" />
+    from seckill
+    order by create_time desc 
+    limit #{offset},#{limit}
+  </select>
+  
+  <!--mybatis调用存储过程， 执行秒杀 -->
+  <select id="killByProcedure" statementType="CALLABLE">
+  	 call execute_seckill(
+  	#{seckillId,jdbcType=BIGINT,mode=IN},
+	#{phone,jdbcType=BIGINT,mode=IN},
+	#{killTime,jdbcType=TIMESTAMP,mode=IN},
+	#{result,jdbcType=INTEGER,mode=OUT}
+  )
+  </select>
+
+</mapper>

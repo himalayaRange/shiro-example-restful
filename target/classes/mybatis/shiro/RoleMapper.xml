@@ -1,0 +1,150 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="cn.com.zygx.backFramework.dao.IRoleDao" >
+  <resultMap id="BaseResultMap" type="cn.com.zygx.backFramework.model.Role" >
+    <id column="id" property="id" jdbcType="INTEGER" />
+    <result column="name" property="name" jdbcType="VARCHAR" />
+     <result column="sn" property="sn" jdbcType="VARCHAR" />
+  </resultMap>
+  <sql id="Base_Column_List" >
+    id, name,sn
+  </sql>
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
+    select 
+    <include refid="Base_Column_List" />
+    from t_role
+    where id = #{id,jdbcType=INTEGER}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer" >
+    delete from t_role
+    where id = #{id,jdbcType=INTEGER}
+  </delete>
+  <insert id="insert" parameterType="cn.com.zygx.backFramework.model.Role" >
+    insert into t_role (id, name,sn)
+    values (#{id,jdbcType=INTEGER}, #{name,jdbcType=VARCHAR},#{sn,jdbcType=VARCHAR})
+  </insert>
+  <insert id="insertSelective" parameterType="cn.com.zygx.backFramework.model.Role" >
+    insert into t_role
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        id,
+      </if>
+      <if test="name != null" >
+        name,
+      </if>
+       <if test="sn != null" >
+        sn,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        #{id,jdbcType=INTEGER},
+      </if>
+      <if test="name != null" >
+        #{name,jdbcType=VARCHAR},
+      </if>
+       <if test="sn != null" >
+        #{sn,jdbcType=VARCHAR},
+      </if>
+    </trim>
+  </insert>
+  <update id="update" parameterType="cn.com.zygx.backFramework.model.Role" >
+    update t_role
+    <set >
+      <if test="name != null" >
+        name = #{name,jdbcType=VARCHAR},
+      </if>
+        <if test="sn != null" >
+        sn = #{sn,jdbcType=VARCHAR},
+      </if>
+    </set>
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="cn.com.zygx.backFramework.model.Role" >
+    update t_role
+    set name = #{name,jdbcType=VARCHAR},
+     sn = #{sn,jdbcType=VARCHAR}
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+  
+  <select id="listRole" resultMap="BaseResultMap" >
+    select 
+    <include refid="Base_Column_List" />
+    from t_role
+  </select>
+  
+  <select id="listByUseRole" resultMap="BaseResultMap">
+    select r.*
+    from t_user_role ur,t_role r,t_user u where u.id=ur.userId and r.id=ur.roleId and u.id=#{uid,jdbcType=INTEGER} 
+  </select>
+  
+   <select id="loadUserRole" resultType="cn.com.zygx.backFramework.model.UserRole">
+    select ur from t_user_role ur where ur.userId=#{uid,jdbcType=INTEGER} 
+    and ur.roleId=#{roleId,jdbcType=INTEGER}
+  </select>
+	
+	
+	<insert id="addUserRole">
+    insert into t_user_role
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="uid != null" >
+        userId,
+      </if>
+      <if test="roleId != null" >
+        roleId,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="uid != null" >
+        #{uid,jdbcType=INTEGER},
+      </if>
+      <if test="roleId != null" >
+        #{roleId,jdbcType=INTEGER},
+      </if>
+    </trim>
+  </insert>
+  
+  <delete id="deleteUserRole">
+    delete from t_user_role
+    where userId=#{uid,jdbcType=INTEGER} and roleId=#{roleId,jdbcType=INTEGER}
+  </delete>
+  
+  <delete id="deleteUserAllRole" >
+    delete from t_user_role
+    where userId=#{uid,jdbcType=INTEGER}
+  </delete>
+  
+   <select id="listRoleResources" resultType="cn.com.zygx.backFramework.model.Resources">
+  	select res.* from t_role r,t_resources res,t_role_res rr where r.id=rr.roleId and res.id=rr.resId and r.id=#{roleId,jdbcType=INTEGER}
+  </select>
+	
+  <insert id="addRoleResource" parameterType="java.lang.Integer" >
+    insert into t_role_res
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="roleId != null" >
+        roleId,
+      </if>
+      <if test="resId != null" >
+        resId,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="roleId != null" >
+        #{roleId,jdbcType=INTEGER},
+      </if>
+      <if test="resId != null" >
+        #{resId,jdbcType=INTEGER},
+      </if>
+    </trim>
+  </insert>
+  
+  <select id="loadResourceRole" resultType="cn.com.zygx.backFramework.model.RoleResources">
+	select rr.* from t_role_res rr where rr.roleId=#{roleId,jdbcType=INTEGER} and rr.resId=#{resId,jdbcType=INTEGER}
+  </select>
+  
+   <delete id="deleteRoleResource" >
+    delete from t_role_res 
+    where roleId=#{roleId,jdbcType=INTEGER} and resId=#{resId,jdbcType=INTEGER}
+  </delete>
+  
+</mapper>

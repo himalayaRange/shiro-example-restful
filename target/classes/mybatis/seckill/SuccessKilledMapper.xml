@@ -1,0 +1,100 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="cn.com.zygx.backFramework.dao.SuccessKilledDao" >
+  <resultMap id="BaseResultMap" type="cn.com.zygx.backFramework.model.SuccessKilled" >
+    <id column="seckill_id" property="seckill_id" jdbcType="BIGINT" />
+    <id column="user_phone" property="user_phone" jdbcType="BIGINT" />
+    <result column="state" property="state" jdbcType="TINYINT" />
+    <result column="create_time" property="create_time" jdbcType="TIMESTAMP" />
+  </resultMap>
+  <sql id="Base_Column_List" >
+    seckill_id, user_phone, state, create_time
+  </sql>
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="cn.com.zygx.backFramework.model.SuccessKilled" >
+    select 
+    <include refid="Base_Column_List" />
+    from success_killed
+    where seckill_id = #{seckill_id,jdbcType=BIGINT}
+      and user_phone = #{user_phone,jdbcType=BIGINT}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="cn.com.zygx.backFramework.model.SuccessKilled" >
+    delete from success_killed
+    where seckill_id = #{seckill_id,jdbcType=BIGINT}
+      and user_phone = #{user_phone,jdbcType=BIGINT}
+  </delete>
+  <insert id="insert" parameterType="cn.com.zygx.backFramework.model.SuccessKilled" >
+    insert into success_killed (seckill_id, user_phone, state, 
+      create_time)
+    values (#{seckill_id,jdbcType=BIGINT}, #{user_phone,jdbcType=BIGINT}, #{state,jdbcType=TINYINT}, 
+      #{create_time,jdbcType=TIMESTAMP})
+  </insert>
+  <!-- 防止主键或者联合主键冲突，需要加上ignore,这样数据库就不会抛出异常-->
+  <insert id="insertSelective" parameterType="cn.com.zygx.backFramework.model.SuccessKilled" >
+    insert  ignore into success_killed
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="seckill_id != null" >
+        seckill_id,
+      </if>
+      <if test="user_phone != null" >
+        user_phone,
+      </if>
+      <if test="state != null" >
+        state,
+      </if>
+      <if test="create_time != null" >
+        create_time,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="seckill_id != null" >
+        #{seckill_id,jdbcType=BIGINT},
+      </if>
+      <if test="user_phone != null" >
+        #{user_phone,jdbcType=BIGINT},
+      </if>
+      <if test="state != null" >
+        #{state,jdbcType=TINYINT},
+      </if>
+      <if test="create_time != null" >
+        #{create_time,jdbcType=TIMESTAMP},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="cn.com.zygx.backFramework.model.SuccessKilled" >
+    update success_killed
+    <set >
+      <if test="state != null" >
+        state = #{state,jdbcType=TINYINT},
+      </if>
+      <if test="create_time != null" >
+        create_time = #{create_time,jdbcType=TIMESTAMP},
+      </if>
+    </set>
+    where seckill_id = #{seckill_id,jdbcType=BIGINT}
+      and user_phone = #{user_phone,jdbcType=BIGINT}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="cn.com.zygx.backFramework.model.SuccessKilled" >
+    update success_killed
+    set state = #{state,jdbcType=TINYINT},
+      create_time = #{create_time,jdbcType=TIMESTAMP}
+    where seckill_id = #{seckill_id,jdbcType=BIGINT}
+      and user_phone = #{user_phone,jdbcType=BIGINT}
+  </update>
+  
+   <!-- 获取秒杀成功的明细，并携带seckill实体 -->
+    <select id="queryByIdWithseckill" resultType="cn.com.zygx.backFramework.model.SuccessKilled" >
+    select 
+     sk.seckill_id, 
+     sk.user_phone, 
+     sk.state, 
+     sk.create_time,
+     s.seckill_id "seckill.seckill_id",
+     s.name "seckill.name",
+     s.number "seckill.number",
+     s.start_time "seckill.start_time",
+     s.end_time "seckill.end_time",
+     s.create_time "seckill.create_time"
+    from success_killed sk inner join seckill s on sk.seckill_id =s.seckill_id 
+    where sk.seckill_id = #{seckillId,jdbcType=BIGINT} and sk.user_phone=#{userPhone,jdbcType=BIGINT}
+  </select>
+</mapper>
